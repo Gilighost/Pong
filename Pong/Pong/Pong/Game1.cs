@@ -30,6 +30,7 @@ namespace Pong
 
         private Ball ball;
         private Paddle paddle;
+        private Enemy enemy;
 
         private SoundEffect swishSound;
         private SoundEffect crashSound;
@@ -44,9 +45,11 @@ namespace Pong
 
             ball = new Ball(this);
             paddle = new Paddle(this);
+            enemy = new Enemy(this);
 
             Components.Add(ball);
-            Components.Add(paddle);             
+            Components.Add(paddle);
+            Components.Add(enemy); 
 
             // Call Window_ClientSizeChanged when screen size is changed
             this.Window.ClientSizeChanged += new EventHandler<EventArgs>(Window_ClientSizeChanged);
@@ -133,13 +136,21 @@ namespace Pong
             // a back-and-forth bouncing logic error.
             if (ball.X > maxX)
             {
-                ball.ChangeHorzDirection();
-                ball.X = maxX;
+                crashSound.Play();
+                ball.Reset();
+
+                // Reset timer and stop ball's Update() from executing
+                delayTimer = 0;
+                ball.Enabled = false;
             }
             else if (ball.X < 0)
             {
-                ball.ChangeHorzDirection();
-                ball.X = 0;
+                crashSound.Play();
+                ball.Reset();
+
+                // Reset timer and stop ball's Update() from executing
+                delayTimer = 0;
+                ball.Enabled = false;
             }
 
             if (ball.Y < 0)
@@ -149,17 +160,12 @@ namespace Pong
             }
             else if (ball.Y > maxY)
             {
-                // Game over - reset ball
-                crashSound.Play();
-                ball.Reset();
-
-                // Reset timer and stop ball's Update() from executing
-                delayTimer = 0;
-                ball.Enabled = false;
+                ball.ChangeVertDirection();
+                ball.Y = maxY;
             }
 
             // Collision?  Check rectangle intersection between ball and hand
-            if (ball.Boundary.Intersects(paddle.Boundary) && ball.SpeedY > 0)
+            if (ball.Boundary.Intersects(paddle.Boundary))
             {
                 swishSound.Play();
 
@@ -170,13 +176,37 @@ namespace Pong
                 if ((ballMiddle < paddleMiddle && ball.SpeedX > 0) ||
                     (ballMiddle > paddleMiddle && ball.SpeedX < 0))
                 {
-                    ball.ChangeHorzDirection();
+                    ball.ChangeVertDirection();
                 }
 
                 // Go back up the screen and speed up
+                ball.ChangeHorzDirection();
                 ball.ChangeVertDirection();
-                ball.SpeedUp();                
+                ball.SpeedUp();
             }
+
+            if (ball.Boundary.Intersects(enemy.Boundary))
+            {
+                swishSound.Play();
+
+                // If hitting the side of the paddle the ball is coming toward, 
+                // switch the ball's horz direction
+                float ballMiddle = (ball.X + ball.Width) / 2;
+                float paddleMiddle = (paddle.X + paddle.Width) / 2;
+                if ((ballMiddle > paddleMiddle && ball.SpeedX > 0) ||
+                    (ballMiddle < paddleMiddle && ball.SpeedX < 0))
+                {
+                    ball.ChangeVertDirection();
+                }
+
+                // Go back up the screen and speed up
+                ball.ChangeHorzDirection();
+                ball.ChangeVertDirection();
+                ball.SpeedUp();
+            }
+
+
+            enemy.Move(ball, gameTime);
             
             base.Update(gameTime);
         }

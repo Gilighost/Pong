@@ -98,8 +98,8 @@ namespace Pong
             base.Initialize();
 
             // Make sure base.Initialize() is called before this or handSprite will be null
-            X = (GraphicsDevice.Viewport.Width - Width) / 2;
-            Y = GraphicsDevice.Viewport.Height - Height;
+            X = 0;
+            Y = (GraphicsDevice.Viewport.Height - Height) / 2;
 
             Speed = DEFAULT_X_SPEED;
         }
@@ -127,14 +127,14 @@ namespace Pong
             // Move paddle, but don't allow movement off the screen
 
             KeyboardState newKeyState = Keyboard.GetState();
-            if (newKeyState.IsKeyDown(Keys.Right) && X + paddleSprite.Width
-                + moveDistance <= GraphicsDevice.Viewport.Width)
+            if (newKeyState.IsKeyDown(Keys.Down) && Y + paddleSprite.Height
+                + moveDistance <= GraphicsDevice.Viewport.Height)
             {
-                X += moveDistance;
+                Y += moveDistance;
             }
-            else if (newKeyState.IsKeyDown(Keys.Left) && X - moveDistance >= 0)
+            else if (newKeyState.IsKeyDown(Keys.Up) && Y - moveDistance >= 0)
             {
-                X -= moveDistance;
+                Y -= moveDistance;
             }
             
             base.Update(gameTime);
