@@ -96,7 +96,7 @@ namespace Pong
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            enemySprite = contentManager.Load<Texture2D>(@"Content\Images\fairy2");
+            enemySprite = contentManager.Load<Texture2D>(@"Content\Images\fire_fairy");
         }
 
         public override void Update(GameTime gameTime)
@@ -118,18 +118,27 @@ namespace Pong
             base.Draw(gameTime);
         }
 
+        public void Reset()
+        {
+            X = GraphicsDevice.Viewport.Width - enemySprite.Width;
+            Y = (GraphicsDevice.Viewport.Height - Height) / 2;
+            
+        }
         public void Move(Ball ball, GameTime gameTime)
         {
             float moveDistance = Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (ball.Y > this.Y && Y + enemySprite.Height
-               + moveDistance <= GraphicsDevice.Viewport.Height)
-            {
-                Y += moveDistance;
-            }
-            else if (ball.Y < this.Y && Y - moveDistance >= 0)
-            {
-                Y -= moveDistance;
+            if(ball.SpeedX >= 0)
+            { 
+                if (ball.Y > this.Y && Y + enemySprite.Height
+                   + moveDistance <= GraphicsDevice.Viewport.Height)
+                {
+                    Y += moveDistance;
+                }
+                else if (ball.Y < this.Y && Y - moveDistance >= 0)
+                {
+                    Y -= moveDistance;
+                }
             }
         }
     }

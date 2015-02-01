@@ -27,16 +27,30 @@ namespace Pong
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         private GraphicsDeviceManager graphics;
+        private SpriteBatch spriteBatch;
+
+        private Texture2D background;
+        private Rectangle mainFrame;
+
+        private SpriteFont font;
 
         private Ball ball;
         private Paddle paddle;
         private Enemy enemy;
 
+        private int playerScore, enemyScore;
+
         private SoundEffect swishSound;
         private SoundEffect crashSound;
 
+        private Song fairyMusic;
+        private bool songStart = false;
+
         // Used to delay between rounds 
         private float delayTimer = 0;
+
+        static Vector2 playerScorePos = new Vector2(350, 400);
+        static Vector2 enemyScorePos = new Vector2(420, 400);
 
         public Game1()
         {
@@ -46,6 +60,9 @@ namespace Pong
             ball = new Ball(this);
             paddle = new Paddle(this);
             enemy = new Enemy(this);
+
+            playerScore = 0;
+            enemyScore = 0;
 
             Components.Add(ball);
             Components.Add(paddle);
@@ -82,8 +99,7 @@ namespace Pong
             // Don't allow ball to move just yet
             ball.Enabled = false;  
 
-            //added for anim
-            //ball.Initialize();
+
 
             base.Initialize();
         }
@@ -94,11 +110,18 @@ namespace Pong
         /// </summary>
         protected override void LoadContent()
         {
-            //added for anim
-            //ball.LoadContent();
+            spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            swishSound = Content.Load<SoundEffect>(@"Audio\swish");
-            crashSound = Content.Load<SoundEffect>(@"Audio\crash");
+            background = Content.Load<Texture2D>(@"Images\fairy_castle");
+            mainFrame = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+
+            font = Content.Load<SpriteFont>(@"fairyFont");
+
+            fairyMusic = Content.Load<Song>(@"Audio\fairy_song");
+            MediaPlayer.IsRepeating = true; 
+
+            swishSound = Content.Load<SoundEffect>(@"Audio\bell");
+            crashSound = Content.Load<SoundEffect>(@"Audio\chime");
         }
 
         /// <summary>
@@ -117,6 +140,13 @@ namespace Pong
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            //start music
+            if (!songStart)
+            {
+                MediaPlayer.Play(fairyMusic);
+                songStart = true;
+            }
+
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
                 Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -128,9 +158,6 @@ namespace Pong
                 graphics.IsFullScreen = !graphics.IsFullScreen;
                 graphics.ApplyChanges();
             }
-            
-            //added for anim
-            ball.Update(gameTime);
 
             // Wait until a second has passed before animating ball 
             delayTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -147,7 +174,9 @@ namespace Pong
             {
                 crashSound.Play();
                 ball.Reset();
+                enemy.Reset();
 
+                playerScore++;
                 // Reset timer and stop ball's Update() from executing
                 delayTimer = 0;
                 ball.Enabled = false;
@@ -156,7 +185,9 @@ namespace Pong
             {
                 crashSound.Play();
                 ball.Reset();
+                enemy.Reset();
 
+                enemyScore++;
                 // Reset timer and stop ball's Update() from executing
                 delayTimer = 0;
                 ball.Enabled = false;
@@ -227,9 +258,19 @@ namespace Pong
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.White);
-            
+
+            spriteBatch.Begin();
+            spriteBatch.Draw(background, mainFrame, Color.White);
+            DrawText();
+            spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        private void DrawText()
+        {
+            spriteBatch.DrawString(font, playerScore.ToString(), playerScorePos, Color.White);
+            spriteBatch.DrawString(font, enemyScore.ToString(), enemyScorePos, Color.White);
         }
     }
 }
