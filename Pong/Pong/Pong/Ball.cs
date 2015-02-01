@@ -21,6 +21,11 @@ namespace Pong
         private SpriteBatch spriteBatch;
         private ContentManager contentManager;
 
+        //added for animation
+        Texture2D ballImage;
+        Vector2 framePosition;
+        Animation ballAnimation = new Animation();
+
         // Default speed of ball
         private const float DEFAULT_X_SPEED = -150;
         private const float DEFAULT_Y_SPEED = 150;
@@ -84,7 +89,7 @@ namespace Pong
         /// </summary>
         public int Width
         {
-            get { return ballSprite.Width; }
+            get { return ballImage.Width; }
         }
 
         /// <summary>
@@ -92,7 +97,7 @@ namespace Pong
         /// </summary>
         public int Height
         {
-            get { return ballSprite.Height; }
+            get { return ballImage.Height; }
         }
 
         /// <summary>
@@ -103,7 +108,7 @@ namespace Pong
             get
             {
                 return new Rectangle((int)ballPosition.X, (int)ballPosition.Y,
-                    ballSprite.Width, ballSprite.Height);
+                    ballImage.Width, ballImage.Height);
             }
         }
         #endregion
@@ -112,6 +117,7 @@ namespace Pong
             : base(game)
         {
             contentManager = new ContentManager(game.Services);
+            
         }
 
         /// <summary>
@@ -127,9 +133,9 @@ namespace Pong
             // Make sure ball is not positioned off the screen
             if (ballPosition.Y < 0)
                 ballPosition.Y = 0;
-            else if (ballPosition.Y + ballSprite.Height > GraphicsDevice.Viewport.Height)
+            else if (ballPosition.Y + ballImage.Height > GraphicsDevice.Viewport.Height)
             {
-                ballPosition.Y = GraphicsDevice.Viewport.Height - ballSprite.Height;
+                ballPosition.Y = GraphicsDevice.Viewport.Height - ballImage.Height;
                 ballSpeed.X *= -1;
             }
         }
@@ -175,6 +181,7 @@ namespace Pong
             ballPosition.X = INIT_X_POS;
             ballPosition.Y = INIT_Y_POS;
 
+            ballAnimation.Initialize(framePosition, new Vector2(8, 10));
             base.Initialize();
         }
 
@@ -184,10 +191,14 @@ namespace Pong
         /// </summary>
         protected override void LoadContent()
         {
+            //added for anim
+            ballImage = contentManager.Load<Texture2D>(@"Content/Images/dance");
+            ballAnimation.AnimationImage = ballImage;
+
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // Load the texture if it exists
-            ballSprite = contentManager.Load<Texture2D>(@"Content\Images\basketball");
+            //ballSprite = contentManager.Load<Texture2D>(@"Content\Images\basketball");
         }
 
         /// <summary>
@@ -196,8 +207,12 @@ namespace Pong
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
+            //added for anim
+            ballAnimation.Update(gameTime);
+
             // Move the sprite by speed, scaled by elapsed time.
             ballPosition += ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            ballAnimation.Position = ballPosition;
 
             base.Update(gameTime);
         }
@@ -208,11 +223,10 @@ namespace Pong
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Draw(GameTime gameTime)
         {
-            base.Draw(gameTime);
+            //added for anim
+            ballAnimation.Draw(spriteBatch);
 
-            spriteBatch.Begin();
-            spriteBatch.Draw(ballSprite, ballPosition, Color.White);
-            spriteBatch.End();
+            base.Draw(gameTime);
         }
     }
 }

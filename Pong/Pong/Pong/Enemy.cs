@@ -96,7 +96,7 @@ namespace Pong
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            enemySprite = contentManager.Load<Texture2D>(@"Content\Images\black_cat");
+            enemySprite = contentManager.Load<Texture2D>(@"Content\Images\fairy2");
         }
 
         public override void Update(GameTime gameTime)

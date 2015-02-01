@@ -82,6 +82,9 @@ namespace Pong
             // Don't allow ball to move just yet
             ball.Enabled = false;  
 
+            //added for anim
+            //ball.Initialize();
+
             base.Initialize();
         }
 
@@ -91,6 +94,9 @@ namespace Pong
         /// </summary>
         protected override void LoadContent()
         {
+            //added for anim
+            //ball.LoadContent();
+
             swishSound = Content.Load<SoundEffect>(@"Audio\swish");
             crashSound = Content.Load<SoundEffect>(@"Audio\crash");
         }
@@ -122,6 +128,9 @@ namespace Pong
                 graphics.IsFullScreen = !graphics.IsFullScreen;
                 graphics.ApplyChanges();
             }
+            
+            //added for anim
+            ball.Update(gameTime);
 
             // Wait until a second has passed before animating ball 
             delayTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -219,6 +228,7 @@ namespace Pong
         {
             GraphicsDevice.Clear(Color.White);
             
+
             base.Draw(gameTime);
         }
     }
