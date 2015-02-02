@@ -261,6 +261,7 @@ namespace Pong
 
             spriteBatch.Begin();
             spriteBatch.Draw(background, mainFrame, Color.White);
+            ball.Draw(gameTime);
             DrawText();
             spriteBatch.End();
 

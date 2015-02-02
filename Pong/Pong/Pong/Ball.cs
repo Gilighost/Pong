@@ -21,6 +21,15 @@ namespace Pong
         private SpriteBatch spriteBatch;
         private ContentManager contentManager;
 
+        // Texture stuff
+        Texture2D texture;
+        Point frameSize = new Point(110, 128);
+        Point currentFrame = new Point(0, 0);
+        Point sheetSize = new Point(8, 10);
+        // Framerate stuff
+        int timeSinceLastFrame = 0;
+        int millisecondsPerFrame = 75;
+
         // Default speed of ball
         private const float DEFAULT_X_SPEED = -150;
         private const float DEFAULT_Y_SPEED = 150;
@@ -46,6 +55,7 @@ namespace Pong
         /// <summary>
         /// Gets or sets the ball's horizontal speed.
         /// </summary>
+        /// 
         public float SpeedX
         {
             get { return ballSpeed.X; }
@@ -84,7 +94,7 @@ namespace Pong
         /// </summary>
         public int Width
         {
-            get { return ballSprite.Width; }
+            get { return frameSize.X; }
         }
 
         /// <summary>
@@ -92,7 +102,7 @@ namespace Pong
         /// </summary>
         public int Height
         {
-            get { return ballSprite.Height; }
+            get { return frameSize.Y; }
         }
 
         /// <summary>
@@ -103,7 +113,7 @@ namespace Pong
             get
             {
                 return new Rectangle((int)ballPosition.X, (int)ballPosition.Y,
-                    ballSprite.Width, ballSprite.Height);
+                    frameSize.X, frameSize.Y);
             }
         }
         #endregion
@@ -198,12 +208,10 @@ namespace Pong
         /// </summary>
         protected override void LoadContent()
         {
-
-
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             //Load the texture if it exists
-            ballSprite = contentManager.Load<Texture2D>(@"Content\Images\basketball");
+            ballSprite = contentManager.Load<Texture2D>(@"Content\Images\dance");
         }
 
         /// <summary>
@@ -215,6 +223,19 @@ namespace Pong
 
             // Move the sprite by speed, scaled by elapsed time.
             ballPosition += ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            timeSinceLastFrame += gameTime.ElapsedGameTime.Milliseconds; if (timeSinceLastFrame > millisecondsPerFrame)
+            {
+                timeSinceLastFrame -= millisecondsPerFrame;
+                ++currentFrame.X;
+                if (currentFrame.X >= sheetSize.X)
+                {
+                    currentFrame.X = 0;
+                    ++currentFrame.Y;
+                    if (currentFrame.Y >= sheetSize.Y)
+                        currentFrame.Y = 0;
+                }
+            }
 
             base.Update(gameTime);
         }
@@ -229,7 +250,11 @@ namespace Pong
             base.Draw(gameTime);
 
             spriteBatch.Begin();
-            spriteBatch.Draw(ballSprite, ballPosition, Color.White);
+            spriteBatch.Draw(ballSprite, ballPosition, new Rectangle(currentFrame.X * frameSize.X,
+                    currentFrame.Y * frameSize.Y,
+                    frameSize.X,
+                    frameSize.Y),
+                Color.White);
             spriteBatch.End();
 
         }
