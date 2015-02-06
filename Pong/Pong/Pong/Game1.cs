@@ -26,7 +26,7 @@ namespace Pong
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
-        private const int scoreToWin = 7;
+        private const int scoreToWin = 1;
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
@@ -171,6 +171,7 @@ namespace Pong
 
             if (!gameOver)
             {
+                ball.Visible = true;
                 // Wait until a second has passed before animating ball 
                 delayTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
                 if (delayTimer > 1)
@@ -194,12 +195,14 @@ namespace Pong
                     }
                     else
                     {
-                        ball.Reset();
+                       
                         enemy.Reset();
                     }
                     // Reset timer and stop ball's Update() from executing
+                    ball.Reset();
                     delayTimer = 0;
                     ball.Enabled = false;
+                    ball.Visible = false;
                 }
                 else if (ball.X < 0)
                 {
@@ -213,12 +216,14 @@ namespace Pong
                     }
                     else
                     {
-                        ball.Reset();
+                      
                         enemy.Reset();
                     }
                     // Reset timer and stop ball's Update() from executing
+                    ball.Reset();
                     delayTimer = 0;
                     ball.Enabled = false;
+                    ball.Visible = false;
                 }
 
                 if (ball.Y < 0)
@@ -305,12 +310,13 @@ namespace Pong
             {
                 if (playerScore > enemyScore)
                 {
-                    spriteBatch.DrawString(font, "You Win!", new Vector2((GraphicsDevice.Viewport.Width / 2), (GraphicsDevice.Viewport.Height / 2)), Color.White);
+                    spriteBatch.DrawString(font, "You Win!", new Vector2(280, 200), Color.White);
                 }
                 else
                 {
                     spriteBatch.DrawString(font, "You Lose!", new Vector2(280, 200), Color.White);
                 }
+                spriteBatch.DrawString(font, "Press enter to play again!", new Vector2(140, 255), Color.White);
             }
         }
     }
