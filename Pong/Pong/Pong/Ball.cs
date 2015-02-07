@@ -123,8 +123,8 @@ namespace Pong
         {
             get
             {
-                Vector3 spherePos = new Vector3(ballPosition.X + (ballSprite.Width / 2), ballPosition.Y + (ballSprite.Height / 2), 0);
-                return new BoundingSphere(spherePos, 50);
+                Vector3 spherePos = new Vector3(ballPosition.X + (frameSize.X / 2), ballPosition.Y + (frameSize.Y / 2), 0);
+                return new BoundingSphere(spherePos, 30);
             }
         }
         #endregion

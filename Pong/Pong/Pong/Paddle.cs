@@ -86,7 +86,7 @@ namespace Pong
             get
             {
                 Vector3 spherePos = new Vector3(paddlePosition.X + (paddleSprite.Width / 2), paddlePosition.Y + (paddleSprite.Width / 2), 0);
-                return new BoundingSphere(spherePos, 110);
+                return new BoundingSphere(spherePos, 50);
             }
         }
 

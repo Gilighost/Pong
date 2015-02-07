@@ -26,7 +26,7 @@ namespace Pong
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
-        private const int scoreToWin = 1;
+        private const int scoreToWin = 7;
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
@@ -51,7 +51,7 @@ namespace Pong
         private bool songStart = false;
 
         private bool isPaused = false;
-        private float pausePressedTime = 0; //init to be greater than one so game can be paused
+        private float pausePressedTime = 0; 
 
         // Used to delay between rounds 
         private float delayTimer = 0;
@@ -278,6 +278,7 @@ namespace Pong
                     // Go back up the screen and speed up
                     ball.ChangeHorzDirection();
                     */
+
                     Vector2 A = new Vector2(ball.X, ball.Y);
                     Vector2 B = new Vector2(paddle.X, paddle.Y);
 
@@ -295,10 +296,10 @@ namespace Pong
                     ball.SpeedUp();
                 }
 
-                if (ball.Boundary.Intersects(enemy.Boundary))
+                if (ball.CircleBoundary.Intersects(enemy.CircleBoundary))
                 {
                     swishSound.Play();
-
+                    /*
                     // If hitting the side of the paddle the ball is coming toward, 
                     // switch the ball's horz direction
                     float ballMiddle = (ball.Y + ball.Height) / 2;
@@ -312,6 +313,22 @@ namespace Pong
                     // Go back up the screen and speed up
                     ball.ChangeHorzDirection();
                     //ball.ChangeVertDirection();
+                     */
+
+                    Vector2 A = new Vector2(ball.X, ball.Y);
+                    Vector2 B = new Vector2(paddle.X, paddle.Y);
+
+                    Vector2 C = A - B;
+
+                    C.Normalize();
+
+                    Vector2 D = new Vector2(ball.SpeedX, ball.SpeedY);
+
+                    Vector2 E = Vector2.Reflect(D, C);
+
+                    ball.SpeedX = E.X;
+                    ball.SpeedY = E.Y;
+
                     ball.SpeedUp();
                 }
 

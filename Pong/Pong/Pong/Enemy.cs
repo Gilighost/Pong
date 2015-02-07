@@ -78,7 +78,7 @@ namespace Pong
             get
             {
                 Vector3 spherePos = new Vector3(enemyPosition.X + (enemySprite.Width / 2), enemyPosition.Y + (enemySprite.Width / 2), 0);
-                return new BoundingSphere(spherePos, 110);
+                return new BoundingSphere(spherePos, 50);
             }
         }
 
