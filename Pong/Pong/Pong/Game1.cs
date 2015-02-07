@@ -258,12 +258,14 @@ namespace Pong
                 }
 
                 // Collision?  Check rectangle intersection between ball and hand
-                if (ball.Boundary.Intersects(paddle.Boundary))
+                if (ball.CircleBoundary.Intersects(paddle.CircleBoundary))
                 {
                     swishSound.Play();
 
                     // If hitting the side of the paddle the ball is coming toward, 
                     // switch the ball's horz direction
+
+                    /*
                     float ballMiddle = (ball.Y + ball.Height) / 2;
                     float paddleMiddle = (paddle.Y + paddle.Height) / 2;
                     if ((ballMiddle < paddleMiddle && ball.SpeedY > 0) ||
@@ -271,10 +273,25 @@ namespace Pong
                     {
                         ball.ChangeVertDirection();
                     }
-
+                     
+                     
                     // Go back up the screen and speed up
                     ball.ChangeHorzDirection();
-                    //ball.ChangeVertDirection();
+                    */
+                    Vector2 A = new Vector2(ball.X, ball.Y);
+                    Vector2 B = new Vector2(paddle.X, paddle.Y);
+
+                    Vector2 C = A - B;
+
+                    C.Normalize();
+
+                    Vector2 D = new Vector2(ball.SpeedX, ball.SpeedY);
+
+                    Vector2 E = Vector2.Reflect(D, C);
+
+                    ball.SpeedX = E.X;
+                    ball.SpeedY = E.Y;
+
                     ball.SpeedUp();
                 }
 
