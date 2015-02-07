@@ -43,11 +43,15 @@ namespace Pong
 
         private int playerScore, enemyScore;
 
+
         private SoundEffect swishSound;
         private SoundEffect crashSound;
 
         private Song fairyMusic;
         private bool songStart = false;
+
+        private bool isPaused = false;
+        private float pausePressedTime = 0; //init to be greater than one so game can be paused
 
         // Used to delay between rounds 
         private float delayTimer = 0;
@@ -151,9 +155,25 @@ namespace Pong
             }
 
             // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-                Keyboard.GetState().IsKeyDown(Keys.Escape))
-                this.Exit();
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
+                if (isPaused == false)
+                {
+                    if ((float)gameTime.TotalGameTime.Seconds - pausePressedTime > .1) //ensure its not counting the same button press
+                    {
+                        isPaused = true;
+                        pausePressedTime = (float)gameTime.TotalGameTime.TotalSeconds;
+                    }
+                }
+                else
+                {
+                    if ((float)gameTime.TotalGameTime.Seconds - pausePressedTime > .1) //ensure its not counting the same button press
+                    {
+                        isPaused = false;
+                        pausePressedTime = (float)gameTime.TotalGameTime.TotalSeconds;
+                    }
+                }
+            }
 
             // Press F to toggle full-screen mode
             if (Keyboard.GetState().IsKeyDown(Keys.F))
@@ -169,7 +189,7 @@ namespace Pong
                 enemyScore = 0;
             }
 
-            if (!gameOver)
+            if (!gameOver && !isPaused)
             {
                 ball.Visible = true;
                 // Wait until a second has passed before animating ball 
@@ -283,6 +303,7 @@ namespace Pong
 
                 base.Update(gameTime);
             }
+            
         }
 
         /// <summary>
@@ -317,6 +338,13 @@ namespace Pong
                     spriteBatch.DrawString(font, "You Lose!", new Vector2(280, 200), Color.White);
                 }
                 spriteBatch.DrawString(font, "Press enter to play again!", new Vector2(140, 255), Color.White);
+            }
+            if (isPaused)
+            {
+                spriteBatch.DrawString(font, "Fairy Dreamscape by...", new Vector2(160, 60), Color.DeepPink);
+                spriteBatch.DrawString(font, "Sam Hipp", new Vector2(275, 110), Color.Gold);
+                spriteBatch.DrawString(font, "&&", new Vector2(340, 160), Color.Purple);
+                spriteBatch.DrawString(font, "Cameron LaFerney", new Vector2(190, 210), Color.LightGreen);
             }
         }
     }
