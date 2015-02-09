@@ -30,7 +30,6 @@ namespace Pong
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
-        private KeyboardState oldState;
 
         private Texture2D background;
         private Rectangle mainFrame;
@@ -38,7 +37,6 @@ namespace Pong
         private SpriteFont font;
 
         private bool gameOver;
-        private bool mouseControl;
 
         private Ball ball;
         private Paddle paddle;
@@ -375,24 +373,20 @@ namespace Pong
             {
                 if (playerScore > enemyScore)
                 {
-<<<<<<< HEAD
                     spriteBatch.DrawString(font, "You Win!", new Vector2(570, 325), Color.White);
-=======
-                    spriteBatch.DrawString(font, "You Win!", new Vector2(280, 200), Color.White);
->>>>>>> 948b3a919120044beee59f505f56ce718c8dcd63
                 }
                 else
                 {
                     spriteBatch.DrawString(font, "You Lose!", new Vector2(570, 325), Color.White);
                 }
-                spriteBatch.DrawString(font, "Press enter to play again!", new Vector2(140, 255), Color.White);
+                spriteBatch.DrawString(font, "Press enter to play again!", new Vector2(400, 400), Color.White);
             }
             if (isPaused)
             {
-                spriteBatch.DrawString(font, "Fairy Dreamscape by...", new Vector2(160, 60), Color.DeepPink);
-                spriteBatch.DrawString(font, "Sam Hipp", new Vector2(275, 110), Color.Gold);
-                spriteBatch.DrawString(font, "&&", new Vector2(340, 160), Color.Purple);
-                spriteBatch.DrawString(font, "Cameron LaFerney", new Vector2(190, 210), Color.LightGreen);
+                spriteBatch.DrawString(font, "Fairy Dreamscape by...", new Vector2(480, 300), Color.DeepPink);
+                spriteBatch.DrawString(font, "Sam Hipp", new Vector2(600, 350), Color.Gold);
+                spriteBatch.DrawString(font, "&&", new Vector2(665, 400), Color.Purple);
+                spriteBatch.DrawString(font, "Cameron LaFerney", new Vector2(515, 450), Color.LightGreen);
             }
         }
     }
