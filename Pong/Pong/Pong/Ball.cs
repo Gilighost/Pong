@@ -116,6 +116,17 @@ namespace Pong
                     frameSize.X, frameSize.Y);
             }
         }
+        /// <summary>
+        /// Returns a BoundingSphere centered on the ball.
+        /// </summary>
+        public BoundingSphere CircleBoundary
+        {
+            get
+            {
+                Vector3 spherePos = new Vector3(ballPosition.X + (frameSize.X / 2), ballPosition.Y + (frameSize.Y / 2), 0);
+                return new BoundingSphere(spherePos, 30);
+            }
+        }
         #endregion
 
         public Ball(Game game)

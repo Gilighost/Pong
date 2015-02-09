@@ -46,11 +46,15 @@ namespace Pong
 
         private int playerScore, enemyScore;
 
+
         private SoundEffect swishSound;
         private SoundEffect crashSound;
 
         private Song fairyMusic;
         private bool songStart = false;
+
+        private bool isPaused = false;
+        private float pausePressedTime = 0; 
 
         // Used to delay between rounds 
         private float delayTimer = 0;
@@ -160,9 +164,25 @@ namespace Pong
             }
 
             // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-                Keyboard.GetState().IsKeyDown(Keys.Escape))
-                this.Exit();
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
+                if (isPaused == false)
+                {
+                    if ((float)gameTime.TotalGameTime.Seconds - pausePressedTime > .1) //ensure its not counting the same button press
+                    {
+                        isPaused = true;
+                        pausePressedTime = (float)gameTime.TotalGameTime.TotalSeconds;
+                    }
+                }
+                else
+                {
+                    if ((float)gameTime.TotalGameTime.Seconds - pausePressedTime > .1) //ensure its not counting the same button press
+                    {
+                        isPaused = false;
+                        pausePressedTime = (float)gameTime.TotalGameTime.TotalSeconds;
+                    }
+                }
+            }
 
             // Press F to toggle full-screen mode
             if (Keyboard.GetState().IsKeyDown(Keys.F))
@@ -179,8 +199,9 @@ namespace Pong
                 ball.Reset();
             }
 
-            if (!gameOver)
+            if (!gameOver && !isPaused)
             {
+                ball.Visible = true;
                 // Wait until a second has passed before animating ball 
                 delayTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
                 if (delayTimer > 1)
@@ -204,12 +225,14 @@ namespace Pong
                     }
                     else
                     {
-                        ball.Reset();
+                       
                         enemy.Reset();
                     }
                     // Reset timer and stop ball's Update() from executing
+                    ball.Reset();
                     delayTimer = 0;
                     ball.Enabled = false;
+                    ball.Visible = false;
                 }
                 else if (ball.X < 0)
                 {
@@ -223,12 +246,14 @@ namespace Pong
                     }
                     else
                     {
-                        ball.Reset();
+                      
                         enemy.Reset();
                     }
                     // Reset timer and stop ball's Update() from executing
+                    ball.Reset();
                     delayTimer = 0;
                     ball.Enabled = false;
+                    ball.Visible = false;
                 }
 
                 if (ball.Y < 0)
@@ -243,12 +268,14 @@ namespace Pong
                 }
 
                 // Collision?  Check rectangle intersection between ball and hand
-                if (ball.Boundary.Intersects(paddle.Boundary))
+                if (ball.CircleBoundary.Intersects(paddle.CircleBoundary))
                 {
                     swishSound.Play();
 
                     // If hitting the side of the paddle the ball is coming toward, 
                     // switch the ball's horz direction
+
+                    /*
                     float ballMiddle = (ball.Y + ball.Height) / 2;
                     float paddleMiddle = (paddle.Y + paddle.Height) / 2;
                     if ((ballMiddle < paddleMiddle && ball.SpeedY > 0) ||
@@ -256,17 +283,33 @@ namespace Pong
                     {
                         ball.ChangeVertDirection();
                     }
-
+                     
+                     
                     // Go back up the screen and speed up
                     ball.ChangeHorzDirection();
-                    //ball.ChangeVertDirection();
+                    */
+
+                    Vector2 A = new Vector2(ball.X, ball.Y);
+                    Vector2 B = new Vector2(paddle.X, paddle.Y);
+
+                    Vector2 C = A - B;
+
+                    C.Normalize();
+
+                    Vector2 D = new Vector2(ball.SpeedX, ball.SpeedY);
+
+                    Vector2 E = Vector2.Reflect(D, C);
+
+                    ball.SpeedX = E.X;
+                    ball.SpeedY = E.Y;
+
                     ball.SpeedUp();
                 }
 
-                if (ball.Boundary.Intersects(enemy.Boundary))
+                if (ball.CircleBoundary.Intersects(enemy.CircleBoundary))
                 {
                     swishSound.Play();
-
+                    /*
                     // If hitting the side of the paddle the ball is coming toward, 
                     // switch the ball's horz direction
                     float ballMiddle = (ball.Y + ball.Height) / 2;
@@ -280,6 +323,22 @@ namespace Pong
                     // Go back up the screen and speed up
                     ball.ChangeHorzDirection();
                     //ball.ChangeVertDirection();
+                     */
+
+                    Vector2 A = new Vector2(ball.X, ball.Y);
+                    Vector2 B = new Vector2(paddle.X, paddle.Y);
+
+                    Vector2 C = A - B;
+
+                    C.Normalize();
+
+                    Vector2 D = new Vector2(ball.SpeedX, ball.SpeedY);
+
+                    Vector2 E = Vector2.Reflect(D, C);
+
+                    ball.SpeedX = E.X;
+                    ball.SpeedY = E.Y;
+
                     ball.SpeedUp();
                 }
 
@@ -288,6 +347,7 @@ namespace Pong
 
                 base.Update(gameTime);
             }
+            
         }
 
         /// <summary>
@@ -315,12 +375,24 @@ namespace Pong
             {
                 if (playerScore > enemyScore)
                 {
+<<<<<<< HEAD
                     spriteBatch.DrawString(font, "You Win!", new Vector2(570, 325), Color.White);
+=======
+                    spriteBatch.DrawString(font, "You Win!", new Vector2(280, 200), Color.White);
+>>>>>>> 948b3a919120044beee59f505f56ce718c8dcd63
                 }
                 else
                 {
                     spriteBatch.DrawString(font, "You Lose!", new Vector2(570, 325), Color.White);
                 }
+                spriteBatch.DrawString(font, "Press enter to play again!", new Vector2(140, 255), Color.White);
+            }
+            if (isPaused)
+            {
+                spriteBatch.DrawString(font, "Fairy Dreamscape by...", new Vector2(160, 60), Color.DeepPink);
+                spriteBatch.DrawString(font, "Sam Hipp", new Vector2(275, 110), Color.Gold);
+                spriteBatch.DrawString(font, "&&", new Vector2(340, 160), Color.Purple);
+                spriteBatch.DrawString(font, "Cameron LaFerney", new Vector2(190, 210), Color.LightGreen);
             }
         }
     }
