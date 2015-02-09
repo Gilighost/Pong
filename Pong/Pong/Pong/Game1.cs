@@ -130,6 +130,7 @@ namespace Pong
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            //Castle image found here: http://i.imgur.com/3kO7YtY.jpg
             background = Content.Load<Texture2D>(@"Images\fairy_castle");
             mainFrame = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
@@ -138,6 +139,7 @@ namespace Pong
             fairyMusic = Content.Load<Song>(@"Audio\fairy_song");
             MediaPlayer.IsRepeating = true;
 
+            //navi sound effect found here: http://users.content.ytmnd.com/5/4/5/545e26ebc84f7d62bcfcd0118a1d2fec.wav
             heyListen = Content.Load<SoundEffect>(@"Audio\heyListen");
             swishSound = Content.Load<SoundEffect>(@"Audio\bell");
             crashSound = Content.Load<SoundEffect>(@"Audio\chime");

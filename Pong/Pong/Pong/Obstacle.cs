@@ -96,6 +96,7 @@ namespace Pong
          {
              spriteBatch = new SpriteBatch(GraphicsDevice);
 
+             //this image taken from http://author-quest.blogspot.com/2014/06/my-most-annoying-thing-in-each-zelda.html
              obstacleSprite = contentManager.Load<Texture2D>(@"Content\Images\navi");
          }
          public override void Draw(GameTime gameTime)

@@ -104,6 +104,7 @@ namespace Pong
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            //image found here: http://i.imgur.com/kT1EmAz.png
             enemySprite = contentManager.Load<Texture2D>(@"Content\Images\fire_fairy");
         }
 

@@ -123,7 +123,8 @@ namespace Pong
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            
+
+            //image found here: http://ekladata.com/_r4BWrKu4QYgD7dOTK_SSzTeNJg.png
             paddleSprite = contentManager.Load<Texture2D>(@"Content\Images\butter_fairy");
         }
 

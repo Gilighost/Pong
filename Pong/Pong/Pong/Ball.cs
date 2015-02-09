@@ -221,6 +221,7 @@ namespace Pong
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             //Load the texture if it exists
+            //sprite sheet found here: http://celestialcoding.com/index.php?action=dlattach;topic=1209.0;attach=685;image
             ballSprite = contentManager.Load<Texture2D>(@"Content\Images\dance");
         }
 
