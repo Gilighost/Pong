@@ -26,9 +26,11 @@ namespace Pong
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
-        private const int scoreToWin = 7;
+        private const int scoreToWin = 1;
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
+
+        private KeyboardState oldState;
 
         private Texture2D background;
         private Rectangle mainFrame;
@@ -36,6 +38,7 @@ namespace Pong
         private SpriteFont font;
 
         private bool gameOver;
+        private bool mouseControl;
 
         private Ball ball;
         private Paddle paddle;
@@ -52,12 +55,14 @@ namespace Pong
         // Used to delay between rounds 
         private float delayTimer = 0;
 
-        static Vector2 playerScorePos = new Vector2(350, 400);
-        static Vector2 enemyScorePos = new Vector2(420, 400);
+        static Vector2 playerScorePos = new Vector2(650, 700);
+        static Vector2 enemyScorePos = new Vector2(720, 700);
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+            graphics.PreferredBackBufferHeight = 768;
+            graphics.PreferredBackBufferWidth = 1366;
             Content.RootDirectory = "Content";
 
             ball = new Ball(this);
@@ -81,6 +86,10 @@ namespace Pong
             paddle.Y = GraphicsDevice.Viewport.Height - paddle.Height;
             if (paddle.X + paddle.Width > GraphicsDevice.Viewport.Width)
                 paddle.X = GraphicsDevice.Viewport.Width - paddle.Width;
+
+            enemy.Y = GraphicsDevice.Viewport.Height - enemy.Height;
+            if (enemy.X + enemy.Width > GraphicsDevice.Viewport.Width)
+                enemy.X = GraphicsDevice.Viewport.Width - enemy.Width;
         }
 
         /// <summary>
@@ -167,6 +176,7 @@ namespace Pong
                 gameOver = false;
                 playerScore = 0;
                 enemyScore = 0;
+                ball.Reset();
             }
 
             if (!gameOver)
@@ -305,11 +315,11 @@ namespace Pong
             {
                 if (playerScore > enemyScore)
                 {
-                    spriteBatch.DrawString(font, "You Win!", new Vector2((GraphicsDevice.Viewport.Width / 2), (GraphicsDevice.Viewport.Height / 2)), Color.White);
+                    spriteBatch.DrawString(font, "You Win!", new Vector2(570, 325), Color.White);
                 }
                 else
                 {
-                    spriteBatch.DrawString(font, "You Lose!", new Vector2(280, 200), Color.White);
+                    spriteBatch.DrawString(font, "You Lose!", new Vector2(570, 325), Color.White);
                 }
             }
         }

@@ -21,6 +21,9 @@ namespace Pong
         private SpriteBatch spriteBatch;
         private ContentManager contentManager;
 
+        private bool mouseControl;
+        private KeyboardState oldKeyState;
+
         // Paddle sprite
         private Texture2D paddleSprite;
 
@@ -127,14 +130,38 @@ namespace Pong
             // Move paddle, but don't allow movement off the screen
 
             KeyboardState newKeyState = Keyboard.GetState();
-            if (newKeyState.IsKeyDown(Keys.Down) && Y + paddleSprite.Height
-                + moveDistance <= GraphicsDevice.Viewport.Height)
+            if (oldKeyState != null && oldKeyState.IsKeyUp(Keys.M) && newKeyState.IsKeyDown(Keys.M))
             {
-                Y += moveDistance;
+                mouseControl = !mouseControl;
             }
-            else if (newKeyState.IsKeyDown(Keys.Up) && Y - moveDistance >= 0)
+
+            if (mouseControl)
             {
-                Y -= moveDistance;
+                int mouseY = Mouse.GetState().Y;
+                if (mouseY - (paddleSprite.Height / 2) < 0)
+                {
+                    Y = 0;
+                }
+                else if (mouseY + (paddleSprite.Height / 2) > GraphicsDevice.Viewport.Height)
+                {
+                    Y = GraphicsDevice.Viewport.Height - paddleSprite.Height;
+                }
+                else
+                {
+                    Y = mouseY - (paddleSprite.Height / 2);
+                }
+            }
+            else
+            {
+                if (newKeyState.IsKeyDown(Keys.Down) && Y + paddleSprite.Height
+                + moveDistance <= GraphicsDevice.Viewport.Height)
+                {
+                    Y += moveDistance;
+                }
+                else if (newKeyState.IsKeyDown(Keys.Up) && Y - moveDistance >= 0)
+                {
+                    Y -= moveDistance;
+                }
             }
             
             base.Update(gameTime);
