@@ -22,7 +22,6 @@ namespace Pong
         private ContentManager contentManager;
 
         // Texture stuff
-        Texture2D texture;
         Point frameSize = new Point(110, 128);
         Point currentFrame = new Point(0, 0);
         Point sheetSize = new Point(8, 10);

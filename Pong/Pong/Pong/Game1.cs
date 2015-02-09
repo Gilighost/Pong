@@ -37,14 +37,16 @@ namespace Pong
         private SpriteFont font;
 
         private bool gameOver;
+        private bool previouslyIntersecting = false;
 
+        private Obstacle obstacle;
         private Ball ball;
         private Paddle paddle;
         private Enemy enemy;
 
         private int playerScore, enemyScore;
 
-
+        private SoundEffect heyListen;
         private SoundEffect swishSound;
         private SoundEffect crashSound;
 
@@ -67,6 +69,7 @@ namespace Pong
             graphics.PreferredBackBufferWidth = 1366;
             Content.RootDirectory = "Content";
 
+            obstacle = new Obstacle(this);
             ball = new Ball(this);
             paddle = new Paddle(this);
             enemy = new Enemy(this);
@@ -74,6 +77,7 @@ namespace Pong
             playerScore = 0;
             enemyScore = 0;
 
+            Components.Add(obstacle);
             Components.Add(ball);
             Components.Add(paddle);
             Components.Add(enemy); 
@@ -132,8 +136,9 @@ namespace Pong
             font = Content.Load<SpriteFont>(@"fairyFont");
 
             fairyMusic = Content.Load<Song>(@"Audio\fairy_song");
-            MediaPlayer.IsRepeating = true; 
+            MediaPlayer.IsRepeating = true;
 
+            heyListen = Content.Load<SoundEffect>(@"Audio\heyListen");
             swishSound = Content.Load<SoundEffect>(@"Audio\bell");
             crashSound = Content.Load<SoundEffect>(@"Audio\chime");
         }
@@ -161,13 +166,14 @@ namespace Pong
                 songStart = true;
             }
 
-            // Allows the game to exit
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape) && !gameOver)
             {
                 if (isPaused == false)
                 {
                     if ((float)gameTime.TotalGameTime.Seconds - pausePressedTime > .1) //ensure its not counting the same button press
                     {
+                        obstacle.Visible = false;
                         isPaused = true;
                         pausePressedTime = (float)gameTime.TotalGameTime.TotalSeconds;
                     }
@@ -176,6 +182,7 @@ namespace Pong
                 {
                     if ((float)gameTime.TotalGameTime.Seconds - pausePressedTime > .1) //ensure its not counting the same button press
                     {
+                        obstacle.Visible = true;
                         isPaused = false;
                         pausePressedTime = (float)gameTime.TotalGameTime.TotalSeconds;
                     }
@@ -199,6 +206,7 @@ namespace Pong
 
             if (!gameOver && !isPaused)
             {
+                obstacle.Visible = true ;
                 ball.Visible = true;
                 // Wait until a second has passed before animating ball 
                 delayTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -218,6 +226,7 @@ namespace Pong
                     playerScore++;
                     if (playerScore >= scoreToWin)
                     {
+                        obstacle.Visible = false;
                         gameOver = true;
                         //show message
                     }
@@ -239,6 +248,7 @@ namespace Pong
                     enemyScore++;
                     if (enemyScore >= scoreToWin)
                     {
+                        obstacle.Visible = false;
                         gameOver = true;
                         //show message
                     }
@@ -264,10 +274,17 @@ namespace Pong
                     ball.ChangeVertDirection();
                     ball.Y = maxY;
                 }
-
-                // Collision?  Check rectangle intersection between ball and hand
-                if (ball.CircleBoundary.Intersects(paddle.CircleBoundary))
+                if (!ball.CircleBoundary.Intersects(paddle.CircleBoundary) &&
+                    !ball.CircleBoundary.Intersects(enemy.CircleBoundary) &&
+                    !ball.CircleBoundary.Intersects(obstacle.CircleBoundary))
                 {
+                    previouslyIntersecting = false;
+                }
+
+                // Collision?  Check intersection between ball and hand
+                if (!previouslyIntersecting && ball.CircleBoundary.Intersects(paddle.CircleBoundary))
+                {
+                    previouslyIntersecting = true;
                     swishSound.Play();
 
                     // If hitting the side of the paddle the ball is coming toward, 
@@ -304,8 +321,31 @@ namespace Pong
                     ball.SpeedUp();
                 }
 
-                if (ball.CircleBoundary.Intersects(enemy.CircleBoundary))
+                if (!previouslyIntersecting && ball.CircleBoundary.Intersects(obstacle.CircleBoundary))
                 {
+                    previouslyIntersecting = true;
+                    heyListen.Play();
+
+                    Vector2 A = new Vector2(ball.X, ball.Y);
+                    Vector2 B = new Vector2(paddle.X, paddle.Y);
+
+                    Vector2 C = A - B;
+
+                    C.Normalize();
+
+                    Vector2 D = new Vector2(ball.SpeedX, ball.SpeedY);
+
+                    Vector2 E = Vector2.Reflect(D, C);
+
+                    ball.SpeedX = E.X;
+                    ball.SpeedY = E.Y;
+
+                    ball.SpeedUp();
+                }
+
+                if (!previouslyIntersecting && ball.CircleBoundary.Intersects(enemy.CircleBoundary))
+                {
+                    previouslyIntersecting = true;
                     swishSound.Play();
                     /*
                     // If hitting the side of the paddle the ball is coming toward, 
@@ -383,7 +423,7 @@ namespace Pong
             }
             if (isPaused)
             {
-                spriteBatch.DrawString(font, "Fairy Dreamscape by...", new Vector2(480, 300), Color.DeepPink);
+                spriteBatch.DrawString(font, "Fairy Dreamscape by...", new Vector2(480, 300), Color.DeepPink, 0, new Vector2(0,0), 1, SpriteEffects.None, 0);
                 spriteBatch.DrawString(font, "Sam Hipp", new Vector2(600, 350), Color.Gold);
                 spriteBatch.DrawString(font, "&&", new Vector2(665, 400), Color.Purple);
                 spriteBatch.DrawString(font, "Cameron LaFerney", new Vector2(515, 450), Color.LightGreen);
