@@ -26,7 +26,7 @@ namespace Pong
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
-        private const int scoreToWin = 1;
+        private const int scoreToWin = 7;
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
